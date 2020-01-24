@@ -47,6 +47,8 @@ namespace pixi_spine.core {
         hackRegion: TextureRegion;
         hackAttachment: Attachment;
 
+        spineSprite: any;
+
         //this is canon
         data: SlotData;
         bone: Bone;

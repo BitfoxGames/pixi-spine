@@ -160,6 +160,52 @@ namespace pixi_spine {
             this.visible = true;
         }
 
+        public attachSpineSprite(slotName:string, sprite:Spine) {
+            for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                let slot = this.skeleton.slots[i];
+                let slotContainer = this.slotContainers[i];
+                if(slot.data.name == slotName) {
+                    slot.spineSprite = sprite;
+                    slotContainer.addChild(sprite);
+                    this._removeCurrentVisualsIfNeeded(slot);
+                    return;
+                }
+            }
+        }
+
+        private _removeCurrentVisualsIfNeeded(slot) {
+            if (slot.currentMesh) {
+                slot.currentMesh.visible = false;
+                slot.currentMesh = null;
+                slot.currentMeshName = undefined;
+            }
+            if (slot.currentSprite) {
+                slot.currentSprite.visible = false;
+                slot.currentSprite = null;
+                slot.currentSpriteName = undefined;
+            }
+        }
+
+        public detachSpineSprite(slotName:string) {
+            for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                let slot = this.skeleton.slots[i];
+                let slotContainer = this.slotContainers[i];
+                if(slot.data.name == slotName) {
+                    if(slot.spineSprite) {
+                        slotContainer.removeChild(slot.spineSprite)
+
+                        const transform = new PIXI.Transform();
+                        (transform as any)._parentID = -1;
+                        (transform as any)._worldID = (slotContainer.transform as any)._worldID;
+                        slotContainer.transform = transform;
+
+                        slot.spineSprite = null;
+                    }
+                    return;
+                }
+            }
+        }
+
         /**
          * If this flag is set to true, the spine animation will be automatically updated every
          * time the object id drawn. The down side of this approach is that the delta time is
@@ -270,15 +316,19 @@ namespace pixi_spine {
                 let attachment = slot.getAttachment();
                 let slotContainer = this.slotContainers[i];
 
-                if (!attachment) {
+                if (!attachment && !slot.spineSprite) {
                     slotContainer.visible = false;
                     continue;
                 }
 
                 let spriteColor: any = null;
 
-                let attColor = (attachment as any).color;
-                if (attachment instanceof core.RegionAttachment) {
+                let attColor = attachment ? (attachment as any).color : null;
+
+                if (slot.spineSprite) {
+                    let transform = slotContainer.transform;
+                    transform.setFromMatrix(slot.bone.matrix);
+                } else if (attachment instanceof core.RegionAttachment) {
                     let region = (attachment as core.RegionAttachment).region;
                     if (region) {
                         if (slot.currentMesh) {
