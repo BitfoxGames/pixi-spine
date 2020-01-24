@@ -8208,6 +8208,47 @@ var pixi_spine;
             _this.visible = true;
             return _this;
         }
+        Spine.prototype.attachSpineSprite = function (slotName, sprite) {
+            for (var i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                var slot = this.skeleton.slots[i];
+                var slotContainer = this.slotContainers[i];
+                if (slot.data.name == slotName) {
+                    slot.spineSprite = sprite;
+                    slotContainer.addChild(sprite);
+                    this._removeCurrentVisualsIfNeeded(slot);
+                    return;
+                }
+            }
+        };
+        Spine.prototype._removeCurrentVisualsIfNeeded = function (slot) {
+            if (slot.currentMesh) {
+                slot.currentMesh.visible = false;
+                slot.currentMesh = null;
+                slot.currentMeshName = undefined;
+            }
+            if (slot.currentSprite) {
+                slot.currentSprite.visible = false;
+                slot.currentSprite = null;
+                slot.currentSpriteName = undefined;
+            }
+        };
+        Spine.prototype.detachSpineSprite = function (slotName) {
+            for (var i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                var slot = this.skeleton.slots[i];
+                var slotContainer = this.slotContainers[i];
+                if (slot.data.name == slotName) {
+                    if (slot.spineSprite) {
+                        slotContainer.removeChild(slot.spineSprite);
+                        var transform = new PIXI.Transform();
+                        transform._parentID = -1;
+                        transform._worldID = slotContainer.transform._worldID;
+                        slotContainer.transform = transform;
+                        slot.spineSprite = null;
+                    }
+                    return;
+                }
+            }
+        };
         Object.defineProperty(Spine.prototype, "autoUpdate", {
             get: function () {
                 return this._autoUpdate;
@@ -8279,13 +8320,17 @@ var pixi_spine;
                 var slot = slots[i];
                 var attachment = slot.getAttachment();
                 var slotContainer = this.slotContainers[i];
-                if (!attachment) {
+                if (!attachment && !slot.spineSprite) {
                     slotContainer.visible = false;
                     continue;
                 }
                 var spriteColor = null;
-                var attColor = attachment.color;
-                if (attachment instanceof pixi_spine.core.RegionAttachment) {
+                var attColor = attachment ? attachment.color : null;
+                if (slot.spineSprite) {
+                    var transform = slotContainer.transform;
+                    transform.setFromMatrix(slot.bone.matrix);
+                }
+                else if (attachment instanceof pixi_spine.core.RegionAttachment) {
                     var region = attachment.region;
                     if (region) {
                         if (slot.currentMesh) {
