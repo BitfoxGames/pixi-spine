@@ -58,7 +58,7 @@ namespace pixi_spine.core {
                 let bone: Bone;
                 console.log(boneData)
                 console.log(boneData.parent)
-                if (boneData.parent == null)
+                if (boneData.parent === undefined)
                     bone = new Bone(boneData, this, null);
                 else {
                     let parent = this.bones[boneData.parent.index];
