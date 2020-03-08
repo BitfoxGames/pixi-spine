@@ -50,7 +50,7 @@ namespace pixi_spine.core {
             if (data == null) throw new Error("data cannot be null.");
             this.data = data;
 
-            console.log(data)
+            console.info('buh',data)
 
             this.bones = new Array<Bone>();
             for (let i = 0; i < data.bones.length; i++) {

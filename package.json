@@ -21,18 +21,18 @@
     "url": "https://github.com/pixijs/pixi-spine.git"
   },
   "scripts": {
-    "cleanup": "rimraf bin && mkdirp bin",
-    "prestart": "yarn cleanup",
-    "start": "parallelshell \"yarn watch\"",
-    "watch": "tsc -w",
-    "prebuild": "yarn cleanup",
+    "cleanup": "npx rimraf bin && npx mkdirp bin",
+    "prestart": "npx yarn cleanup",
+    "start": "npx parallelshell \"npx yarn watch\"",
+    "watch": "npx tsc -w",
+    "prebuild": "npx yarn cleanup",
     "make:dts": "node scripts/make_dts.js",
-    "build": "tsc && yarn make:dts",
-    "docs": "typedoc --out ./docs/ --readme README.md ./src/",
-    "check:browserify": "yarn checkpack browserify -e test/checkpack.ts",
-    "check:webpack": "yarn checkpack webpack -e test/checkpack.ts",
-    "check:vanillajs": "yarn checkpack vanillajs -e test/checkpack.ts",
-    "check:all": "yarn build && yarn check:browserify && yarn check:webpack && yarn check:vanillajs"
+    "build": "npx tsc && npx yarn make:dts",
+    "docs": "npx typedoc --out ./docs/ --readme README.md ./src/",
+    "check:browserify": "npx yarn checkpack browserify -e test/checkpack.ts",
+    "check:webpack": "npx yarn checkpack webpack -e test/checkpack.ts",
+    "check:vanillajs": "npx yarn checkpack vanillajs -e test/checkpack.ts",
+    "check:all": "npx yarn build && npx yarn check:browserify && npx yarn check:webpack && npx yarn check:vanillajs"
   },
   "files": [
     "bin/",
