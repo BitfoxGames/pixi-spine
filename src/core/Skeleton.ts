@@ -58,7 +58,6 @@ namespace pixi_spine.core {
                     bone = new Bone(boneData, this, null);
                 else {
                     let parent = this.bones[boneData.parent.index];
-                    console.log("got parent", parent)
                     bone = new Bone(boneData, this, parent);
                     parent.children.push(bone);
                 }

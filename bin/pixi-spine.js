@@ -3356,7 +3356,6 @@ var pixi_spine;
                         bone = new core.Bone(boneData, this, null);
                     else {
                         var parent_1 = this.bones[boneData.parent.index];
-                        console.log("got parent", parent_1);
                         bone = new core.Bone(boneData, this, parent_1);
                         parent_1.children.push(bone);
                     }
