@@ -58,7 +58,6 @@ namespace pixi_spine.core {
                 let bone: Bone;
                 console.log(boneData)
                 console.log(boneData.parent)
-                console.log(boneData.parent.children)
                 if (boneData.parent == null)
                     bone = new Bone(boneData, this, null);
                 else {
