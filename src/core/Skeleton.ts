@@ -50,15 +50,11 @@ namespace pixi_spine.core {
             if (data == null) throw new Error("data cannot be null.");
             this.data = data;
 
-            console.info('buh',data)
-
             this.bones = new Array<Bone>();
             for (let i = 0; i < data.bones.length; i++) {
                 let boneData = data.bones[i];
                 let bone: Bone;
-                console.log(boneData)
-                console.log(boneData.parent)
-                if (boneData.parent === undefined)
+                if (boneData.parent === null)
                     bone = new Bone(boneData, this, null);
                 else {
                     let parent = this.bones[boneData.parent.index];
