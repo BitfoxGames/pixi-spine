@@ -54,7 +54,7 @@ namespace pixi_spine.core {
             for (let i = 0; i < data.bones.length; i++) {
                 let boneData = data.bones[i];
                 let bone: Bone;
-                if (boneData.parent === null)
+                if (boneData.parent == null)
                     bone = new Bone(boneData, this, null);
                 else {
                     let parent = this.bones[boneData.parent.index];
