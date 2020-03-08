@@ -3355,7 +3355,7 @@ var pixi_spine;
                     var bone = void 0;
                     console.log(boneData);
                     console.log(boneData.parent);
-                    if (boneData.parent == null)
+                    if (boneData.parent === undefined)
                         bone = new core.Bone(boneData, this, null);
                     else {
                         var parent_1 = this.bones[boneData.parent.index];
