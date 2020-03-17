@@ -48,6 +48,7 @@ namespace pixi_spine.core {
         hackAttachment: Attachment;
 
         spineSprite: any;
+        pfx: any;
 
         //this is canon
         data: SlotData;

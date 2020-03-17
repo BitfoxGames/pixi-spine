@@ -8221,7 +8221,16 @@ var pixi_spine;
             }
         };
         Spine.prototype.attachPfx = function (slotName, pfx) {
-            console.log("ATTACHED PFX!!");
+            for (var i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                var slot = this.skeleton.slots[i];
+                var slotContainer = this.slotContainers[i];
+                if (slot.data.name == slotName) {
+                    slot.pfx = pfx;
+                    pfx.addToContainer(slotContainer);
+                    this._removeCurrentVisualsIfNeeded(slot);
+                    return;
+                }
+            }
         };
         Spine.prototype._removeCurrentVisualsIfNeeded = function (slot) {
             if (slot.currentMesh) {
@@ -8247,6 +8256,23 @@ var pixi_spine;
                         transform._worldID = slotContainer.transform._worldID;
                         slotContainer.transform = transform;
                         slot.spineSprite = null;
+                    }
+                    return;
+                }
+            }
+        };
+        Spine.prototype.detachPfx = function (slotName) {
+            for (var i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                var slot = this.skeleton.slots[i];
+                var slotContainer = this.slotContainers[i];
+                if (slot.data.name == slotName) {
+                    if (slot.pfx) {
+                        slot.pfx.removeFromContainer(slotContainer);
+                        var transform = new PIXI.Transform();
+                        transform._parentID = -1;
+                        transform._worldID = slotContainer.transform._worldID;
+                        slotContainer.transform = transform;
+                        slot.pfx = null;
                     }
                     return;
                 }
@@ -8323,7 +8349,7 @@ var pixi_spine;
                 var slot = slots[i];
                 var attachment = slot.getAttachment();
                 var slotContainer = this.slotContainers[i];
-                if (!attachment && !slot.spineSprite) {
+                if (!attachment && !slot.spineSprite || !slot.pfx) {
                     slotContainer.visible = false;
                     continue;
                 }
@@ -8332,6 +8358,11 @@ var pixi_spine;
                 if (slot.spineSprite) {
                     var transform = slotContainer.transform;
                     transform.setFromMatrix(slot.bone.matrix);
+                }
+                else if (slot.pfx) {
+                    var transform = slotContainer.transform;
+                    transform.setFromMatrix(slot.bone.matrix);
+                    slot.pfx.update(dt);
                 }
                 else if (attachment instanceof pixi_spine.core.RegionAttachment) {
                     var region = attachment.region;

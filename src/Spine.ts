@@ -174,17 +174,16 @@ namespace pixi_spine {
         }
 
         public attachPfx(slotName:string, pfx:any) {
-            console.log("ATTACHED PFX!!");
-            // for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
-            //     let slot = this.skeleton.slots[i];
-            //     let slotContainer = this.slotContainers[i];
-            //     if(slot.data.name == slotName) {
-            //         slot.spineSprite = sprite;
-            //         slotContainer.addChild(sprite);
-            //         this._removeCurrentVisualsIfNeeded(slot);
-            //         return;
-            //     }
-            // }
+            for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                let slot = this.skeleton.slots[i];
+                let slotContainer = this.slotContainers[i];
+                if(slot.data.name == slotName) {
+                    slot.pfx = pfx;
+                    pfx.addToContainer(slotContainer);
+                    this._removeCurrentVisualsIfNeeded(slot);
+                    return;
+                }
+            }
         }
 
         private _removeCurrentVisualsIfNeeded(slot) {
@@ -214,6 +213,26 @@ namespace pixi_spine {
                         slotContainer.transform = transform;
 
                         slot.spineSprite = null;
+                    }
+                    return;
+                }
+            }
+        }
+
+        public detachPfx(slotName:string) {
+            for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
+                let slot = this.skeleton.slots[i];
+                let slotContainer = this.slotContainers[i];
+                if(slot.data.name == slotName) {
+                    if(slot.pfx) {
+                        slot.pfx.removeFromContainer(slotContainer);
+
+                        const transform = new PIXI.Transform();
+                        (transform as any)._parentID = -1;
+                        (transform as any)._worldID = (slotContainer.transform as any)._worldID;
+                        slotContainer.transform = transform;
+
+                        slot.pfx = null;
                     }
                     return;
                 }
@@ -330,7 +349,7 @@ namespace pixi_spine {
                 let attachment = slot.getAttachment();
                 let slotContainer = this.slotContainers[i];
 
-                if (!attachment && !slot.spineSprite) {
+                if (!attachment && !slot.spineSprite || !slot.pfx) {
                     slotContainer.visible = false;
                     continue;
                 }
@@ -342,6 +361,10 @@ namespace pixi_spine {
                 if (slot.spineSprite) {
                     let transform = slotContainer.transform;
                     transform.setFromMatrix(slot.bone.matrix);
+                } else if (slot.pfx) {
+                    let transform = slotContainer.transform;
+                    transform.setFromMatrix(slot.bone.matrix);
+                    slot.pfx.update(dt);
                 } else if (attachment instanceof core.RegionAttachment) {
                     let region = (attachment as core.RegionAttachment).region;
                     if (region) {

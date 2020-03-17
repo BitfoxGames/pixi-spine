@@ -1000,6 +1000,7 @@ declare module PIXI.spine.core {
         hackRegion: TextureRegion;
         hackAttachment: Attachment;
         spineSprite: any;
+        pfx: any;
         data: SlotData;
         bone: Bone;
         color: Color;
@@ -1381,6 +1382,7 @@ declare module PIXI.spine {
         attachPfx(slotName: string, pfx: any): void;
         private _removeCurrentVisualsIfNeeded;
         detachSpineSprite(slotName: string): void;
+        detachPfx(slotName: string): void;
         get autoUpdate(): boolean;
         set autoUpdate(value: boolean);
         get visible(): boolean;
