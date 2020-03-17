@@ -349,7 +349,7 @@ namespace pixi_spine {
                 let attachment = slot.getAttachment();
                 let slotContainer = this.slotContainers[i];
 
-                if (!attachment && !slot.spineSprite || !slot.pfx) {
+                if (!attachment && !slot.spineSprite && !slot.pfx) {
                     slotContainer.visible = false;
                     continue;
                 }

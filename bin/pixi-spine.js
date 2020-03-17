@@ -8349,7 +8349,7 @@ var pixi_spine;
                 var slot = slots[i];
                 var attachment = slot.getAttachment();
                 var slotContainer = this.slotContainers[i];
-                if (!attachment && !slot.spineSprite || !slot.pfx) {
+                if (!attachment && !slot.spineSprite && !slot.pfx) {
                     slotContainer.visible = false;
                     continue;
                 }
