@@ -8220,6 +8220,9 @@ var pixi_spine;
                 }
             }
         };
+        Spine.prototype.attachPfx = function (slotName, pfx) {
+            console.log("ATTACHED PFX!!");
+        };
         Spine.prototype._removeCurrentVisualsIfNeeded = function (slot) {
             if (slot.currentMesh) {
                 slot.currentMesh.visible = false;

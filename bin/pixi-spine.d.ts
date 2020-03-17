@@ -1378,6 +1378,7 @@ declare module PIXI.spine {
         private _visible;
         constructor(spineData: core.SkeletonData);
         attachSpineSprite(slotName: string, sprite: Spine): void;
+        attachPfx(slotName: string, pfx: any): void;
         private _removeCurrentVisualsIfNeeded;
         detachSpineSprite(slotName: string): void;
         get autoUpdate(): boolean;

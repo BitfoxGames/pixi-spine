@@ -173,6 +173,20 @@ namespace pixi_spine {
             }
         }
 
+        public attachPfx(slotName:string, pfx:any) {
+            console.log("ATTACHED PFX!!");
+            // for (let i = 0, n = this.skeleton.slots.length; i < n; i++) {
+            //     let slot = this.skeleton.slots[i];
+            //     let slotContainer = this.slotContainers[i];
+            //     if(slot.data.name == slotName) {
+            //         slot.spineSprite = sprite;
+            //         slotContainer.addChild(sprite);
+            //         this._removeCurrentVisualsIfNeeded(slot);
+            //         return;
+            //     }
+            // }
+        }
+
         private _removeCurrentVisualsIfNeeded(slot) {
             if (slot.currentMesh) {
                 slot.currentMesh.visible = false;
