@@ -8374,7 +8374,7 @@ var pixi_spine;
                     transform.setFromMatrix(slot.bone.matrix);
                 }
                 else if (slot.pfx) {
-                    if (slot.pfx.worldSpace) {
+                    {
                         var t = this.decomposeTransform(slot.bone.matrix);
                         var ofsX = t.x * cosRot - t.y * sinRot;
                         var ofsY = t.x * sinRot + t.y * cosRot;
@@ -8384,9 +8384,7 @@ var pixi_spine;
                         slot.pfx.scale = scale;
                         slot.pfx.rot = this.rotation + t.rot;
                     }
-                    else {
-                        slot.pfx.x = 0;
-                        slot.pfx.y = 0;
+                    {
                         var m = this.worldTransform.clone();
                         slot.pfx.attachedTransform = m.append(slot.bone.matrix);
                     }
