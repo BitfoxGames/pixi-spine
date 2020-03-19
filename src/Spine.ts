@@ -55,6 +55,7 @@ namespace pixi_spine {
     export class Spine extends PIXI.Container {
         static globalAutoUpdate: boolean = true;
         static globalDelayLimit: number  = 0;
+        static decomposeResult = { x: 0, y: 0, rot: 0, scaleX: 0, scaleY: 0 };
 
         tintRgb: ArrayLike<number>;
         spineData: core.SkeletonData;
@@ -310,6 +311,19 @@ namespace pixi_spine {
             return limit || Number.MAX_VALUE
         }
 
+        decomposeTransform(mat:PIXI.Matrix) {
+            const a = mat.a;
+            const b = mat.b;
+            const c = mat.c;
+            const d = mat.d;
+            Spine.decomposeResult.rot = Math.atan2(b, a);
+            Spine.decomposeResult.scaleX = Math.sqrt((a * a) + (b * b)); 
+            Spine.decomposeResult.scaleY = Math.sqrt((c * c) + (d * d));
+            Spine.decomposeResult.x = mat.tx;
+            Spine.decomposeResult.y = mat.ty;
+            return Spine.decomposeResult;
+        }
+
         /**
          * Update the spine skeleton and its animations by delta time (dt)
          *
@@ -343,6 +357,8 @@ namespace pixi_spine {
             }
 
             let thack = false;
+            const cosRot = Math.cos(this.rotation);
+            const sinRot = Math.sin(this.rotation);
 
             for (let i = 0, n = slots.length; i < n; i++) {
                 let slot = slots[i];
@@ -362,8 +378,21 @@ namespace pixi_spine {
                     let transform = slotContainer.transform;
                     transform.setFromMatrix(slot.bone.matrix);
                 } else if (slot.pfx) {
-                    let transform = slotContainer.transform;
-                    transform.setFromMatrix(slot.bone.matrix);
+                    if(slot.pfx.worldSpace) {
+                        let t = this.decomposeTransform(slot.bone.matrix);
+                        const ofsX = t.x * cosRot - t.y * sinRot;
+                        const ofsY = t.x * sinRot + t.y * cosRot;
+                        const scale = this.scale.x * t.scaleX; // assuming uniform scaling 
+                        slot.pfx.x = this.x + ofsX * scale;
+                        slot.pfx.y = this.y + ofsY * scale;
+                        slot.pfx.scale = scale;
+                        slot.pfx.rot = this.rotation + t.rot;
+                    } else {
+                        slot.pfx.x = 0;
+                        slot.pfx.y = 0;
+                        let m = this.worldTransform.clone();
+                        slot.pfx.attachedTransform = m.append(slot.bone.matrix);
+                    }
                     slot.pfx.update(dt);
                 } else if (attachment instanceof core.RegionAttachment) {
                     let region = (attachment as core.RegionAttachment).region;

@@ -8325,6 +8325,18 @@ var pixi_spine;
             enumerable: true,
             configurable: true
         });
+        Spine.prototype.decomposeTransform = function (mat) {
+            var a = mat.a;
+            var b = mat.b;
+            var c = mat.c;
+            var d = mat.d;
+            Spine.decomposeResult.rot = Math.atan2(b, a);
+            Spine.decomposeResult.scaleX = Math.sqrt((a * a) + (b * b));
+            Spine.decomposeResult.scaleY = Math.sqrt((c * c) + (d * d));
+            Spine.decomposeResult.x = mat.tx;
+            Spine.decomposeResult.y = mat.ty;
+            return Spine.decomposeResult;
+        };
         Spine.prototype.update = function (dt) {
             var delayLimit = this.delayLimit;
             if (dt > delayLimit)
@@ -8345,6 +8357,8 @@ var pixi_spine;
                 light = this.tintRgb;
             }
             var thack = false;
+            var cosRot = Math.cos(this.rotation);
+            var sinRot = Math.sin(this.rotation);
             for (var i = 0, n = slots.length; i < n; i++) {
                 var slot = slots[i];
                 var attachment = slot.getAttachment();
@@ -8360,8 +8374,22 @@ var pixi_spine;
                     transform.setFromMatrix(slot.bone.matrix);
                 }
                 else if (slot.pfx) {
-                    var transform = slotContainer.transform;
-                    transform.setFromMatrix(slot.bone.matrix);
+                    if (slot.pfx.worldSpace) {
+                        var t = this.decomposeTransform(slot.bone.matrix);
+                        var ofsX = t.x * cosRot - t.y * sinRot;
+                        var ofsY = t.x * sinRot + t.y * cosRot;
+                        var scale = this.scale.x * t.scaleX;
+                        slot.pfx.x = this.x + ofsX * scale;
+                        slot.pfx.y = this.y + ofsY * scale;
+                        slot.pfx.scale = scale;
+                        slot.pfx.rot = this.rotation + t.rot;
+                    }
+                    else {
+                        slot.pfx.x = 0;
+                        slot.pfx.y = 0;
+                        var m = this.worldTransform.clone();
+                        slot.pfx.attachedTransform = m.append(slot.bone.matrix);
+                    }
                     slot.pfx.update(dt);
                 }
                 else if (attachment instanceof pixi_spine.core.RegionAttachment) {
@@ -8715,6 +8743,7 @@ var pixi_spine;
         };
         Spine.globalAutoUpdate = true;
         Spine.globalDelayLimit = 0;
+        Spine.decomposeResult = { x: 0, y: 0, rot: 0, scaleX: 0, scaleY: 0 };
         Spine.clippingPolygon = [];
         return Spine;
     }(PIXI.Container));

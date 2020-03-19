@@ -1367,6 +1367,13 @@ declare module PIXI.spine {
     class Spine extends PIXI.Container {
         static globalAutoUpdate: boolean;
         static globalDelayLimit: number;
+        static decomposeResult: {
+            x: number;
+            y: number;
+            rot: number;
+            scaleX: number;
+            scaleY: number;
+        };
         tintRgb: ArrayLike<number>;
         spineData: core.SkeletonData;
         skeleton: core.Skeleton;
@@ -1390,6 +1397,13 @@ declare module PIXI.spine {
         get tint(): number;
         set tint(value: number);
         get delayLimit(): number;
+        decomposeTransform(mat: PIXI.Matrix): {
+            x: number;
+            y: number;
+            rot: number;
+            scaleX: number;
+            scaleY: number;
+        };
         update(dt: number): void;
         private setSpriteRegion;
         private setMeshRegion;
