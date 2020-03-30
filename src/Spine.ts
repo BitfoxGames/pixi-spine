@@ -378,6 +378,7 @@ namespace pixi_spine {
                     let transform = slotContainer.transform;
                     transform.setFromMatrix(slot.bone.matrix);
                 } else if (slot.pfx) {
+
                     // Set up data needed for if an emitter is world-space
                     {
                         let t = this.decomposeTransform(slot.bone.matrix);
@@ -392,8 +393,8 @@ namespace pixi_spine {
                     
                     // Set up data needed for if an emitter is local-space
                     {
-                        let m = this.worldTransform.clone();
-                        slot.pfx.attachedTransform = m.append(slot.bone.matrix);
+                        let transform = slotContainer.transform;
+                        transform.setFromMatrix(slot.bone.matrix);
                     }
 
                     slot.pfx.update(dt);

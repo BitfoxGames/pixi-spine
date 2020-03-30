@@ -8385,8 +8385,8 @@ var pixi_spine;
                         slot.pfx.rot = this.rotation + t.rot;
                     }
                     {
-                        var m = this.worldTransform.clone();
-                        slot.pfx.attachedTransform = m.append(slot.bone.matrix);
+                        var transform = slotContainer.transform;
+                        transform.setFromMatrix(slot.bone.matrix);
                     }
                     slot.pfx.update(dt);
                 }
